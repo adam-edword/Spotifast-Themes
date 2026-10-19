@@ -205,6 +205,8 @@ Pages:
 - `/about/` — what this is; not affiliated with Spotify or Spotifast; link to Spotifast
 
 Design:
+- **Looks like a music app.** Borrow the familiar streaming-app layout: dark near-black background, left sidebar for navigation and filters, big header with a soft color fade, card grid of previews, rounded cards that lift on hover, a round green "play"-style accent button for Download. Use the layout language only, never Spotify's logo, name, wordmark or exact brand assets.
+- **Plain, spoken copy.** Every bit of site text should sound natural read out loud: short sentences, everyday words, talk to the reader as "you". Say "Pick a theme, download it, drop it in your themes folder" rather than "Installation procedure". Same for the bot's issue comments and validation errors.
 - Clean, dark-first, follows `prefers-color-scheme` with a manual toggle
 - Mobile responsive, no horizontal scroll at 360px
 - Previews are the hero; keep chrome minimal

@@ -1,0 +1,7 @@
+{
+  "base": "dark",
+  "colors": {
+    "accent": "#1ed760",
+    "on_accent": "#3ce87a"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "base": "dark",
+  "colors": {
+    "window": "#14121c",
+    "panel": "#0d0b14",
+    "surface": "#1e1b2a",
+    "surface_hover": "#282438",
+    "surface_active": "#322d45",
+    "outline": "#2a2638",
+    "text": "#f1eefa",
+    "secondary": "#b2abc7",
+    "dim": "#7a7391",
+    "accent": "#ff7a59",
+    "accent_hover": "#ff9478",
+    "on_accent": "#1a0e0a",
+    "danger": "#ff6b81",
+    "warning": "#ffc857",
+    "overlay": "#000000b3",
+    "shadow": "#00000099",
+    "tint": "#6b4cff26"
+  }
+}

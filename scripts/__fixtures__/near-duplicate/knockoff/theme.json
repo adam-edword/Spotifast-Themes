@@ -1,0 +1,8 @@
+{
+  "base": "dark",
+  "colors": {
+    "window": "#101821",
+    "accent": "#f2aa4d",
+    "on_accent": "#101820"
+  }
+}
