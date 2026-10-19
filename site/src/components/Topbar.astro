@@ -1,0 +1,21 @@
+---
+import Icon from "./Icon.astro";
+
+interface Props {
+  search?: boolean;
+}
+const { search = false } = Astro.props;
+---
+<div class="topbar">
+  {search && (
+    <div class="search" role="search">
+      <Icon name="search" size={20} />
+      <label for="q" class="visually-hidden">Search themes</label>
+      <input id="q" type="search" placeholder="What do you want to find?" autocomplete="off" />
+    </div>
+  )}
+  <button class="icon-btn theme-toggle" style="margin-left:auto" type="button" aria-label="Switch to light mode" data-theme-toggle>
+    <span class="when-dark"><Icon name="sun" size={20} /></span>
+    <span class="when-light"><Icon name="moon" size={20} /></span>
+  </button>
+</div>

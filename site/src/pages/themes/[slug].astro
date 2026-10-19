@@ -1,0 +1,231 @@
+---
+import Base from "../../layouts/Base.astro";
+import Icon from "../../components/Icon.astro";
+import Topbar from "../../components/Topbar.astro";
+import { loadThemes, reportUrl, url, type GalleryTheme } from "../../lib/themes.ts";
+import { COLOR_KEYS, type ColorKey } from "../../../../scripts/schema.ts";
+
+export function getStaticPaths() {
+  return loadThemes().map((theme) => ({ params: { slug: theme.slug }, props: { theme } }));
+}
+
+interface Props {
+  theme: GalleryTheme;
+}
+const { theme: t } = Astro.props;
+
+// What each color paints in Spotifast, in plain words.
+const USES: Record<ColorKey, string> = {
+  window: "The main background",
+  panel: "Sidebar and player bar",
+  surface: "Cards and album covers",
+  surface_hover: "Whatever your mouse is over",
+  surface_active: "Selected items",
+  outline: "Lines and borders",
+  text: "Main text",
+  secondary: "Smaller, quieter text",
+  dim: "Faint text, like track numbers",
+  accent: "Buttons and highlights",
+  accent_hover: "Buttons under your mouse",
+  on_accent: "Text and icons on buttons",
+  danger: "Errors",
+  warning: "Warnings",
+  overlay: "Pop-ups and dialogs",
+  shadow: "Shadows",
+  tint: "The fade at the top of pages",
+};
+
+const added = new Date(`${t.meta.added}T00:00:00Z`).toLocaleDateString("en-US", {
+  month: "long",
+  day: "numeric",
+  year: "numeric",
+  timeZone: "UTC",
+});
+const downloadHref = url(`download/${t.slug}/${encodeURIComponent(t.downloadName)}`);
+const fade = `color-mix(in srgb, ${t.palette.accent.slice(0, 7)} 40%, var(--panel))`;
+const fileName = t.downloadName;
+
+const OS = [
+  {
+    id: "mac",
+    label: "Mac",
+    folder: "~/Library/Application Support/me.paolino.spotifast/themes",
+    reload: "Then open Terminal and run <code>spotifast reload-themes</code>, or just quit Spotifast and open it again.",
+  },
+  {
+    id: "windows",
+    label: "Windows",
+    folder: "%APPDATA%\\paolino\\spotifast\\config\\themes",
+    reload: "Then open a terminal and run <code>spotifast reload-themes</code>, or just close Spotifast and open it again.",
+  },
+  {
+    id: "linux",
+    label: "Linux",
+    folder: "~/.config/spotifast/themes",
+    reload: "Spotifast notices new themes on its own, so there's nothing else to do here.",
+  },
+];
+---
+<Base
+  title={t.meta.name}
+  description={`${t.meta.name}, a ${t.base} color theme for Spotifast by @${t.meta.github}. Free to download.`}
+  currentSlug={t.slug}
+>
+  <header class="hero" style={`--fade:${fade}`}>
+    <Topbar />
+    <p class="eyebrow">{t.base === "dark" ? "Dark theme" : "Light theme"}</p>
+    <h1 class="big-title">{t.meta.name}</h1>
+    <p class="detail-meta">
+      <strong>
+        <a href={`https://github.com/${t.meta.github}`} rel="noopener">@{t.meta.github}</a>
+      </strong>
+      <span aria-hidden="true">·</span>
+      <span>Added {added}</span>
+      {t.meta.tags.filter((tag) => tag !== t.base).length > 0 && (
+        <>
+          <span aria-hidden="true">·</span>
+          <span>{t.meta.tags.filter((tag) => tag !== t.base).join(", ")}</span>
+        </>
+      )}
+    </p>
+  </header>
+
+  <div class="main-inner">
+    <div class="actions">
+      <a class="btn btn-primary play" href={downloadHref} download={fileName} aria-label={`Download ${t.meta.name}`}>
+        <Icon name="download" size={28} />
+      </a>
+      <button class="btn btn-outline" type="button" data-copy-from="theme-json" data-copied="Copied the theme file">
+        <Icon name="copy" size={20} />Copy JSON
+      </button>
+    </div>
+
+    <img
+      class="big-preview"
+      src={url(`previews/${t.slug}.svg`)}
+      alt={`Preview of ${t.meta.name} theme`}
+      width="1200"
+      height="750"
+    />
+
+    <section aria-labelledby="install-title">
+      <h2 class="section-title" id="install-title">How to use it</h2>
+      <div class="tabs" role="tablist" aria-label="Your computer">
+        {OS.map((os, i) => (
+          <button
+            class="chip"
+            type="button"
+            role="tab"
+            id={`tab-${os.id}`}
+            aria-controls={`panel-${os.id}`}
+            aria-selected={i === 0 ? "true" : "false"}
+            tabindex={i === 0 ? 0 : -1}
+            data-os={os.id}
+          >
+            {os.label}
+          </button>
+        ))}
+      </div>
+      {OS.map((os, i) => (
+        <div role="tabpanel" id={`panel-${os.id}`} aria-labelledby={`tab-${os.id}`} hidden={i !== 0}>
+          <ol class="steps">
+            <li>Hit the green download button above. You'll get a file called <code>{fileName}</code>.</li>
+            <li>
+              In Spotifast, go to <strong>Settings</strong>, then <strong>Appearance</strong>. Next to
+              Theme, click <strong>Open themes folder</strong>.
+            </li>
+            <li>
+              Drag <code>{fileName}</code> into that folder. If you'd rather find it yourself, it's at <code>{os.folder}</code>.
+            </li>
+            <li set:html={os.reload} />
+            <li>Pick <strong>{t.meta.name}</strong> from the Theme list. Done.</li>
+          </ol>
+        </div>
+      ))}
+    </section>
+
+    <section aria-labelledby="colors-title">
+      <h2 class="section-title" id="colors-title">Every color</h2>
+      <p class="lede" style="margin:-8px 0 16px">
+        Click a color code to copy it. Anything this theme leaves out comes from Spotifast's own {t.base} theme.
+      </p>
+      <table class="tracklist">
+        <thead>
+          <tr>
+            <th class="num" scope="col">#</th>
+            <th class="chip-cell" scope="col"><span class="visually-hidden">Swatch</span></th>
+            <th scope="col">Color</th>
+            <th scope="col">Code</th>
+          </tr>
+        </thead>
+        <tbody>
+          {COLOR_KEYS.map((key, i) => {
+            const own = Boolean(t.theme.colors?.[key]);
+            const hex = t.palette[key];
+            return (
+              <tr>
+                <td class="num">{i + 1}</td>
+                <td class="chip-cell"><div class="color-chip" style={`background:${hex}`} /></td>
+                <td>
+                  <span class="key">{USES[key]}</span>
+                  <span class="from-default">
+                    <code style="background:none;padding:0">{key}</code>
+                    {own ? "" : " · from the default"}
+                  </span>
+                </td>
+                <td>
+                  <button class="hex-btn" type="button" data-copy={hex} data-copied={`Copied ${hex}`} aria-label={`Copy ${key} color ${hex}`}>
+                    {hex}
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
+
+    <pre id="theme-json" hidden>{t.json}</pre>
+
+    <p class="note">
+      Something wrong with this theme? <a class="text-link" href={reportUrl(t.slug)} rel="noopener">Let us know</a>.
+    </p>
+  </div>
+</Base>
+
+<script>
+  const tabs = [...document.querySelectorAll<HTMLButtonElement>("[role=tab]")];
+
+  function select(tab: HTMLButtonElement) {
+    for (const t of tabs) {
+      const on = t === tab;
+      t.setAttribute("aria-selected", String(on));
+      t.tabIndex = on ? 0 : -1;
+      document.getElementById(t.getAttribute("aria-controls") ?? "")!.hidden = !on;
+    }
+    try {
+      localStorage.setItem("install-os", tab.dataset.os ?? "");
+    } catch {}
+  }
+
+  tabs.forEach((tab, i) => {
+    tab.addEventListener("click", () => select(tab));
+    tab.addEventListener("keydown", (e) => {
+      const step = e.key === "ArrowRight" ? 1 : e.key === "ArrowLeft" ? -1 : 0;
+      if (!step) return;
+      const next = tabs[(i + step + tabs.length) % tabs.length];
+      select(next);
+      next.focus();
+    });
+  });
+
+  // Start on the visitor's OS, or the one they picked last time.
+  let saved: string | null = null;
+  try {
+    saved = localStorage.getItem("install-os");
+  } catch {}
+  const ua = navigator.userAgent;
+  const guess = /Windows/.test(ua) ? "windows" : /Mac/.test(ua) ? "mac" : /Linux/.test(ua) ? "linux" : null;
+  const start = tabs.find((t) => t.dataset.os === (saved || guess));
+  if (start) select(start);
+</script>

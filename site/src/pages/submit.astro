@@ -1,0 +1,99 @@
+---
+import Base from "../layouts/Base.astro";
+import Icon from "../components/Icon.astro";
+import Topbar from "../components/Topbar.astro";
+import { SUBMIT_URL } from "../lib/themes.ts";
+---
+<Base
+  title="Share a theme"
+  description="Made a Spotifast theme you like? Share it here. Fill in one short form and it goes live on its own."
+  current="submit"
+>
+  <header class="hero">
+    <Topbar />
+    <p class="eyebrow">Share a theme</p>
+    <h1 class="big-title">Made something nice?</h1>
+    <p class="lede">
+      Fill in one short form on GitHub. If everything checks out, your theme goes live in a few
+      minutes. Nobody has to approve it by hand.
+    </p>
+  </header>
+
+  <div class="main-inner prose">
+    <div class="actions">
+      <a class="btn btn-primary" href={SUBMIT_URL} rel="noopener">
+        <Icon name="plus" size={20} />Open the form
+      </a>
+    </div>
+
+    <h2>What you'll need</h2>
+    <ul>
+      <li>A GitHub account.</li>
+      <li>
+        Your theme file. It's the same <code>.json</code> file you use in Spotifast, so just paste
+        it in.
+      </li>
+      <li>A name for it, and a few tags if you want them.</li>
+    </ul>
+
+    <h2>The theme file</h2>
+    <p>
+      It looks like this. <code>base</code> is <code>dark</code> or <code>light</code>, and any color
+      you leave out comes from Spotifast's own theme.
+    </p>
+    <pre class="steps" style="overflow-x:auto;padding:20px"><code style="background:none;padding:0">{`{
+  "base": "dark",
+  "colors": {
+    "window": "#121212",
+    "accent": "#1ed760"
+  }
+}`}</code></pre>
+    <p>
+      Colors are written like <code>#1ed760</code>, or <code>#1ed76080</code> if you want some
+      see-through. Keep the file under 4 KB. A full theme is usually around 700 bytes, so you've got
+      lots of room.
+    </p>
+
+    <h2>Picking a name</h2>
+    <ul>
+      <li>3 to 30 characters, using letters, numbers and single spaces.</li>
+      <li>It has to be new. Two themes can't share a name.</li>
+      <li>
+        Keep it friendly. Swear words, links, and names that sound official (like "Spotify" or
+        "Admin") get turned away.
+      </li>
+    </ul>
+
+    <h2>Making it readable</h2>
+    <p>
+      We check that people can actually read text in your theme. Here's what has to pass:
+    </p>
+    <ul>
+      <li><strong>Main text on the background:</strong> at least 4.5 to 1 contrast.</li>
+      <li><strong>Smaller text on the background:</strong> at least 3 to 1.</li>
+      <li><strong>Text and icons on buttons:</strong> at least 3 to 1.</li>
+    </ul>
+    <p>
+      Not sure? Just send it. If something's off, the bot will tell you exactly which colors to
+      change, and you can fix it by editing your form.
+    </p>
+
+    <h2>What happens next</h2>
+    <ol>
+      <li>A bot reads your form and checks your theme.</li>
+      <li>If there's a problem, it leaves a comment saying what to fix.</li>
+      <li>If it all looks good, your theme gets added and shows up here a few minutes later.</li>
+      <li>
+        Brand new GitHub accounts, and people sharing lots of themes in one day, wait for a person
+        to take a look. That can take a while.
+      </li>
+    </ol>
+
+    <h2>The fine print</h2>
+    <p>
+      Only share themes you made yourself. Everything here is released under
+      <a href="https://creativecommons.org/publicdomain/zero/1.0/" rel="noopener">CC0</a>, which means
+      anyone can use, change, and share your theme for free.
+    </p>
+  </div>
+</Base>

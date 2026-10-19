@@ -1,0 +1,100 @@
+---
+import "../styles/global.css";
+import Icon from "../components/Icon.astro";
+import Logo from "../components/Logo.astro";
+import { loadThemes, url } from "../lib/themes.ts";
+
+interface Props {
+  title: string;
+  description: string;
+  current?: "home" | "submit" | "about";
+  currentSlug?: string;
+}
+const { title, description, current, currentSlug } = Astro.props;
+const themes = loadThemes();
+const pageTitle = title === "Spotifast Themes" ? title : `${title} · Spotifast Themes`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#121212" />
+    <link rel="icon" href={url("favicon.svg")} type="image/svg+xml" />
+    <script is:inline>
+      // Set the color mode before first paint so the page doesn't flash.
+      (() => {
+        let saved = null;
+        try { saved = localStorage.getItem("color-mode"); } catch {}
+        const system = matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark";
+        document.documentElement.dataset.theme = saved === "light" || saved === "dark" ? saved : system;
+      })();
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <div class="app">
+      <aside class="sidebar" aria-label="Site">
+        <nav class="panel" aria-label="Main">
+          <a class="brand" href={url()}>
+            <Logo />
+            <span>Spotifast Themes</span>
+          </a>
+          <ul class="nav">
+            <li>
+              <a href={url()} aria-current={current === "home" ? "page" : undefined}>
+                <Icon name="home" /><span>Home</span>
+              </a>
+            </li>
+            <li>
+              <a href={url("submit/")} aria-current={current === "submit" ? "page" : undefined}>
+                <Icon name="plus" /><span>Share<span class="label-long"> a theme</span></span>
+              </a>
+            </li>
+            <li>
+              <a href={url("about/")} aria-current={current === "about" ? "page" : undefined}>
+                <Icon name="info" /><span>About</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+        <section class="panel library" aria-labelledby="library-title">
+          <div class="library-head">
+            <span id="library-title" style="display:flex;align-items:center;gap:12px">
+              <Icon name="library" />All themes
+            </span>
+            <span style="font-weight:400;font-size:14px">{themes.length}</span>
+          </div>
+          <ul class="library-list">
+            {themes.map((t) => (
+              <li>
+                <a href={url(`themes/${t.slug}/`)} aria-current={t.slug === currentSlug ? "page" : undefined}>
+                  <span class="mini" aria-hidden="true">
+                    <span style={`background:${t.palette.window}`} />
+                    <span style={`background:${t.palette.accent}`} />
+                    <span style={`background:${t.palette.panel}`} />
+                    <span style={`background:${t.palette.text}`} />
+                  </span>
+                  <span style="min-width:0">
+                    <span class="title">{t.meta.name}</span>
+                    <span class="sub">{t.base === "dark" ? "Dark" : "Light"} · @{t.meta.github}</span>
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="sidebar-foot">Not made by Spotify or the Spotifast team.</p>
+        </section>
+      </aside>
+      <main id="main" class="panel main" tabindex="-1">
+        <slot />
+      </main>
+    </div>
+    <div class="toast" role="status" aria-live="polite" data-toast></div>
+    <script>
+      import "../lib/client.ts";
+    </script>
+  </body>
+</html>

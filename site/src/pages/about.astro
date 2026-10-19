@@ -1,0 +1,43 @@
+---
+import Base from "../layouts/Base.astro";
+import Topbar from "../components/Topbar.astro";
+import { REPO_URL } from "../lib/themes.ts";
+---
+<Base
+  title="About"
+  description="A free, community-made gallery of color themes for Spotifast."
+  current="about"
+>
+  <header class="hero">
+    <Topbar />
+    <p class="eyebrow">About</p>
+    <h1 class="big-title">What this is</h1>
+    <p class="lede">
+      A free gallery of color themes for
+      <a class="text-link" href="https://github.com/crmne/spotifast" rel="noopener">Spotifast</a>, made by
+      the people who use it.
+    </p>
+  </header>
+
+  <div class="main-inner prose">
+    <h2>How it works</h2>
+    <p>
+      Everything lives in one <a href={REPO_URL} rel="noopener">GitHub repo</a>. People share themes
+      through a short form, a bot checks them, and the good ones show up here on their own. There are
+      no accounts, no ads, and no tracking.
+    </p>
+
+    <h2>Who made it</h2>
+    <p>
+      This is a fan project. It's <strong>not made by Spotify or by the Spotifast team</strong>, and
+      neither of them is involved. Each theme belongs to the person who shared it, and they're all
+      free for anyone to use.
+    </p>
+
+    <h2>Spotted a problem?</h2>
+    <p>
+      Every theme page has a "Let us know" link at the bottom. Use it if a theme has a rude name, is
+      a copy of someone else's work, or just seems wrong.
+    </p>
+  </div>
+</Base>

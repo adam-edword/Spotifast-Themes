@@ -10,6 +10,9 @@
     "test": "vitest run",
     "validate": "tsx scripts/validate.ts",
     "previews": "tsx scripts/preview.ts",
+    "prepare-site": "tsx scripts/prepare-site.ts",
+    "build": "pnpm prepare-site && pnpm --filter site build",
+    "dev": "pnpm prepare-site && pnpm --filter site dev",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {

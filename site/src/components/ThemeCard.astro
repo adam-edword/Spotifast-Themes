@@ -1,0 +1,44 @@
+---
+import type { GalleryTheme } from "../lib/themes.ts";
+import { url } from "../lib/themes.ts";
+import Icon from "./Icon.astro";
+import Swatches from "./Swatches.astro";
+
+interface Props {
+  theme: GalleryTheme;
+}
+const { theme: t } = Astro.props;
+const href = url(`themes/${t.slug}/`);
+---
+<li
+  data-card
+  data-name={t.meta.name.toLowerCase()}
+  data-author={t.meta.github.toLowerCase()}
+  data-base={t.base}
+  data-tags={t.meta.tags.join(" ")}
+  data-added={t.meta.added}
+>
+  <article class="card">
+    <div class="card-art">
+      <img
+        src={url(`previews/${t.slug}.svg`)}
+        alt={`Preview of ${t.meta.name} theme`}
+        width="1200"
+        height="750"
+        loading="lazy"
+        decoding="async"
+      />
+      <a
+        class="btn btn-primary play"
+        href={url(`download/${t.slug}/${encodeURIComponent(t.downloadName)}`)}
+        download={t.downloadName}
+        aria-label={`Download ${t.meta.name}`}
+      >
+        <Icon name="download" />
+      </a>
+    </div>
+    <h3><a href={href}>{t.meta.name}</a></h3>
+    <p class="by">by @{t.meta.github}</p>
+    <Swatches palette={t.palette} />
+  </article>
+</li>

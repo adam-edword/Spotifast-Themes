@@ -1,0 +1,12 @@
+---
+import type { Palette } from "../../../scripts/resolve.ts";
+import { SWATCH_KEYS } from "../lib/themes.ts";
+
+interface Props {
+  palette: Palette;
+}
+const { palette } = Astro.props;
+---
+<ul class="swatches" aria-hidden="true">
+  {SWATCH_KEYS.map((key) => <li style={`background:${palette[key]}`} title={key} />)}
+</ul>

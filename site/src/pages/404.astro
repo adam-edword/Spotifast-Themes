@@ -1,0 +1,15 @@
+---
+import Base from "../layouts/Base.astro";
+import Topbar from "../components/Topbar.astro";
+import { url } from "../lib/themes.ts";
+---
+<Base title="Not found" description="This page doesn't exist.">
+  <header class="hero">
+    <Topbar />
+    <h1 class="big-title">Nothing here</h1>
+    <p class="lede">This page doesn't exist, or the theme was taken down.</p>
+  </header>
+  <div class="main-inner">
+    <a class="btn btn-primary" href={url()}>Back to all themes</a>
+  </div>
+</Base>
