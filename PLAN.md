@@ -304,9 +304,10 @@ Owner shortcut: `reports.yml` also runs on `issue_comment: [created]`. If the co
 - a submitter with 2+ entries in `removed.json` is automatically treated as blocked by `gate.ts`
 
 ### Enforcing owner-only removal
-- `.github/CODEOWNERS`: `/themes/ @<owner>` and `/removed.json @<owner>`
-- branch protection: require code owner review, **but** the auto-merge path must still work for new submissions. Do this by bypassing the code-owner rule only for the bot App and having `gate.ts` refuse to enable auto-merge on any PR that modifies or deletes existing files. Net effect: additive bot PRs auto-merge; anything touching an existing theme needs the owner.
-- verify this combination actually works in GitHub's branch protection / rulesets UI during Phase 4 and document the exact settings in the README. If the bypass can't be scoped that narrowly, fall back to: no code-owner rule, and rely on `gate.ts` + the bot only ever merging additive PRs.
+Decided in Phase 4: **no CODEOWNERS rule.** A code-owner review requirement would also block the bot's additive submission PRs, and exempting the bot from it means bypassing the whole ruleset, required `validate` check included. It also adds nothing: only the owner has write access, so the only things that can merge are the owner and the bot. Owner-only removal is enforced by:
+- a single `master` ruleset: PR required (0 approvals), `validate` required, bypass only for Repository admin (the owner), **not** the App
+- `gate.ts` refusing to enable auto-merge on any PR that modifies or deletes existing files (unit-tested)
+- the `/remove` command checking the commenter's login against the owner from the event payload
 
 **Acceptance:**
 - valid submission from an eligible account → merged and live with no human action
