@@ -9,6 +9,7 @@
   "scripts": {
     "test": "vitest run",
     "validate": "tsx scripts/validate.ts",
+    "previews": "tsx scripts/preview.ts",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
