@@ -15,6 +15,11 @@ function syncToggle() {
 
 document.querySelectorAll<HTMLButtonElement>("[data-theme-toggle]").forEach((btn) => {
   btn.addEventListener("click", () => {
+    // The theme being tried on has its own colors, so switching modes means taking it off.
+    if (root.hasAttribute("data-try-on")) {
+      setTryOn(false, true);
+      return;
+    }
     const next = currentMode() === "dark" ? "light" : "dark";
     root.dataset.theme = next;
     try {
@@ -70,3 +75,38 @@ document.querySelectorAll<HTMLElement>("[data-copy-from]").forEach((el) => {
     copy(source?.textContent ?? "", el.dataset.copied ?? "Copied");
   });
 });
+
+// "Try it on": dresses the whole site in the theme on this page.
+declare global {
+  interface Window {
+    __tryOn?: Record<string, string>;
+  }
+}
+
+const tryOnButtons = document.querySelectorAll<HTMLButtonElement>("[data-try-on-toggle]");
+
+function setTryOn(on: boolean, remember: boolean) {
+  const vars = window.__tryOn ?? {};
+  for (const [key, value] of Object.entries(vars)) {
+    if (on) root.style.setProperty(key, value);
+    else root.style.removeProperty(key);
+  }
+  root.toggleAttribute("data-try-on", on);
+  tryOnButtons.forEach((btn) => btn.setAttribute("aria-pressed", String(on)));
+  if (remember) {
+    try {
+      if (on) localStorage.setItem("try-on", "1");
+      else localStorage.removeItem("try-on");
+    } catch {}
+  }
+}
+
+tryOnButtons.forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const on = !root.hasAttribute("data-try-on");
+    setTryOn(on, true);
+    showToast(on ? `You're wearing ${btn.dataset.name}. Have a look around.` : "Back to normal.");
+  });
+});
+
+if (root.hasAttribute("data-try-on")) setTryOn(true, false);

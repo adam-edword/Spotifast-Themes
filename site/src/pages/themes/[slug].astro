@@ -3,6 +3,7 @@ import Base from "../../layouts/Base.astro";
 import Icon from "../../components/Icon.astro";
 import Topbar from "../../components/Topbar.astro";
 import { loadThemes, reportUrl, url, type GalleryTheme } from "../../lib/themes.ts";
+import { tryOnVars } from "../../lib/tryOn.ts";
 import { COLOR_KEYS, type ColorKey } from "../../../../scripts/schema.ts";
 
 export function getStaticPaths() {
@@ -70,6 +71,7 @@ const OS = [
   title={t.meta.name}
   description={`${t.meta.name}, a ${t.base} color theme for Spotifast by @${t.meta.github}. Free to download.`}
   currentSlug={t.slug}
+  tryOn={tryOnVars(t.palette, t.base)}
 >
   <header class="hero" style={`--fade:${fade}`}>
     <Topbar />
@@ -97,6 +99,11 @@ const OS = [
       </a>
       <button class="btn btn-outline" type="button" data-copy-from="theme-json" data-copied="Copied the theme file">
         <Icon name="copy" size={20} />Copy JSON
+      </button>
+      <button class="btn btn-outline try-on" type="button" aria-pressed="false" data-try-on-toggle data-name={t.meta.name}>
+        <span class="try-on-off"><Icon name="eye" size={20} /></span>
+        <span class="try-on-on"><Icon name="check" size={20} /></span>
+        Try it on
       </button>
     </div>
 

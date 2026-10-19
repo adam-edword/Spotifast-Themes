@@ -9,8 +9,10 @@ interface Props {
   description: string;
   current?: "home" | "submit" | "about";
   currentSlug?: string;
+  // CSS variables for "Try it on", on theme pages only
+  tryOn?: Record<string, string>;
 }
-const { title, description, current, currentSlug } = Astro.props;
+const { title, description, current, currentSlug, tryOn } = Astro.props;
 const themes = loadThemes();
 const pageTitle = title === "Spotifast Themes" ? title : `${title} · Spotifast Themes`;
 ---
@@ -32,6 +34,19 @@ const pageTitle = title === "Spotifast Themes" ? title : `${title} · Spotifast 
         document.documentElement.dataset.theme = saved === "light" || saved === "dark" ? saved : system;
       })();
     </script>
+    {tryOn && (
+      <script is:inline define:vars={{ tryOn }}>
+        // Re-apply "Try it on" before first paint if it was left on.
+        window.__tryOn = tryOn;
+        let on = false;
+        try { on = localStorage.getItem("try-on") === "1"; } catch {}
+        if (on) {
+          const root = document.documentElement;
+          for (const [k, v] of Object.entries(tryOn)) root.style.setProperty(k, v);
+          root.dataset.tryOn = "";
+        }
+      </script>
+    )}
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>

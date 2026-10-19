@@ -925,3 +925,20 @@ kbd {
 :root[data-theme="light"] .when-light {
   display: inline;
 }
+
+/* "Try it on" toggle */
+
+.try-on[aria-pressed="true"] {
+  background: var(--text);
+  color: var(--panel);
+  box-shadow: none;
+}
+
+.try-on .try-on-on,
+.try-on[aria-pressed="true"] .try-on-off {
+  display: none;
+}
+
+.try-on[aria-pressed="true"] .try-on-on {
+  display: inline;
+}

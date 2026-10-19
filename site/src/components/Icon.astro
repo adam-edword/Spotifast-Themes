@@ -1,7 +1,7 @@
 ---
 // Small inline icons, drawn in the current text color.
 interface Props {
-  name: "home" | "search" | "plus" | "info" | "download" | "copy" | "flag" | "sun" | "moon" | "library" | "check";
+  name: "home" | "search" | "plus" | "info" | "download" | "copy" | "flag" | "sun" | "moon" | "library" | "check" | "eye";
   size?: number;
 }
 const { name, size = 24 } = Astro.props;
@@ -16,6 +16,7 @@ const paths: Record<Props["name"], string> = {
   sun: '<circle cx="12" cy="12" r="4" fill="currentColor"/><path d="M12 2.5v2.5M12 19v2.5M2.5 12H5M19 12h2.5M5.3 5.3l1.8 1.8M16.9 16.9l1.8 1.8M5.3 18.7l1.8-1.8M16.9 7.1l1.8-1.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>',
   moon: '<path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" fill="currentColor"/>',
   library: '<path d="M4 3.5v17M9 3.5v17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/><path d="m13.5 4.5 5.5 15.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>',
+  eye: '<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="12" cy="12" r="3" fill="currentColor"/>',
   check: '<path d="m5 12.5 4.5 4.5L19 7.5" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>',
 };
 ---
