@@ -1,0 +1,28 @@
+name: labels
+
+# The issue forms only apply labels that already exist, and the bot looks for them,
+# so make sure they're all there. Safe to run any number of times.
+on:
+  push:
+    branches: [master]
+    paths: [.github/workflows/labels.yml]
+  workflow_dispatch:
+
+permissions:
+  issues: write
+
+jobs:
+  labels:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Create or update labels
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          gh label create theme-submission --force --color 1ed760 --description "A theme shared through the form"
+          gh label create theme-report     --force --color d63b4c --description "Someone reported a theme"
+          gh label create needs-fixes      --force --color f2b85c --description "The submission has problems to fix"
+          gh label create manual-review    --force --color 6e7784 --description "Waiting for the owner to look"
+          gh label create needs-owner      --force --color b87a14 --description "Only the owner can decide this"

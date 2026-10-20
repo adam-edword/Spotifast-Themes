@@ -1,0 +1,53 @@
+name: submission
+
+on:
+  issues:
+    types: [opened, edited, reopened]
+
+# Everything that writes uses the bot's App token. The default token can only read.
+permissions:
+  contents: read
+
+# One run per issue at a time, so quick edits can't race each other.
+concurrency:
+  group: submission-${{ github.event.issue.number }}
+  cancel-in-progress: false
+
+jobs:
+  submission:
+    if: >-
+      github.event.issue.state == 'open' &&
+      contains(github.event.issue.labels.*.name, 'theme-submission')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      # Always the trusted code on master, never anything from the submission.
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: master
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.22.0
+
+      - name: Install pnpm
+        run: npm install --global pnpm@10.28.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - id: app
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      # The issue body is read from the event file by the script, never put in a command.
+      - name: Check the submission and open or update its pull request
+        run: pnpm exec tsx scripts/submission.ts
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          BOT_LOGIN: ${{ steps.app.outputs.app-slug }}[bot]
+          SITE_URL: ${{ vars.SITE_URL || 'https://adam-edword.github.io/Spotifast-Themes/' }}

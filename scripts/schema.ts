@@ -90,3 +90,18 @@ export type Meta = z.infer<typeof metaSchema>;
 export function slugify(name: string): string {
   return name.toLowerCase().replace(/ /g, "-");
 }
+
+// removed.json: themes the owner took down. Two strikes and a submitter's new themes wait for a person.
+export const removedSchema = z.array(
+  z
+    .object({
+      slug: z.string(),
+      name: z.string(),
+      github: z.string(),
+      date: isoDate,
+      reasons: z.record(z.string(), z.number().int().nonnegative()),
+    })
+    .strict(),
+);
+
+export type RemovedEntry = z.infer<typeof removedSchema>[number];

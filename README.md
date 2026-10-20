@@ -93,13 +93,23 @@ The bot needs to be a GitHub App, not the built-in Actions token. Anything done 
    - `BOT_PRIVATE_KEY`: the whole contents of the `.pem` file
 10. Delete the `.pem` file from your computer.
 
-### 5. Quiet the notifications
+### 5. Labels
+
+The bot and the issue forms need a few labels (`theme-submission`, `theme-report`, `needs-fixes`, `manual-review`, `needs-owner`). The **labels** workflow creates them on its own. If they're ever missing, run it again from **Actions → labels → Run workflow**.
+
+### 6. Quiet the notifications
 
 Click **Watch** at the top of the repo and pick **Ignore** (or **Custom** and only keep what you care about). Otherwise every bot comment ends up in your inbox.
 
+### How the bot works
+
+- **Someone shares a theme.** The bot reads the form, checks the theme, and opens a pull request that adds it. If it passes, auto-merge is turned on and it goes live once `validate` passes. If not, the bot comments with what to fix, and it checks again whenever the issue is edited.
+- **Brand new accounts** (under 30 days), people with 3 themes merged in the last day, and anyone in `BLOCKED_USERS` (in `scripts/gate.ts`) or with 2 removed themes get the `manual-review` label instead. Their pull request waits for you to merge or close it. That's the only thing that ever needs you.
+- **Someone reports a theme.** Nothing happens until 3 different people (with accounts at least 30 days old, not counting the theme's author) report the same one. Then the bot opens a pull request that removes it, labels it `needs-owner` and assigns you. It never merges that on its own.
+
 ### Who can remove a theme
 
-Only you. Nobody else has write access. Reports from visitors can only open a removal pull request, and the bot never merges anything except pull requests that add a brand new theme. Removals wait for you to merge them, or for you to comment `/remove` on a report.
+Only you. Nobody else has write access, and the bot never merges anything except pull requests that add a brand new theme. To take a theme down, merge its removal pull request, or comment exactly `/remove` on any report for it. The bot removes it and closes the reports.
 
 ### Once a year
 

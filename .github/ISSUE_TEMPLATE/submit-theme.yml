@@ -1,0 +1,63 @@
+name: Share a theme
+description: Add your Spotifast theme to the gallery. A bot checks it and adds it on its own.
+title: "Theme: "
+labels: ["theme-submission"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for sharing! Fill this in, and a bot will check your theme in a minute or two.
+        If anything needs fixing, it'll leave a comment here. Just edit this issue to fix it.
+
+  - type: input
+    id: name
+    attributes:
+      label: Theme name
+      description: 3 to 30 characters. Letters, numbers and single spaces only. This is also the name people see in Spotifast.
+      placeholder: Midnight Vinyl
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: tags
+    attributes:
+      label: Tags
+      description: Pick up to 3. Dark or light gets added for you, based on your theme's base.
+      options:
+        - label: minimal
+        - label: vibrant
+        - label: pastel
+        - label: high-contrast
+        - label: retro
+        - label: warm
+        - label: cool
+        - label: monochrome
+
+  - type: textarea
+    id: theme
+    attributes:
+      label: theme.json
+      description: Paste your whole theme file, exactly as it is in your Spotifast themes folder.
+      render: json
+      placeholder: |
+        {
+          "base": "dark",
+          "colors": {
+            "window": "#121212",
+            "accent": "#1ed760"
+          }
+        }
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: promises
+    attributes:
+      label: Before you share
+      options:
+        - label: I made this theme myself
+          required: true
+        - label: I'm releasing it under CC0, so anyone can use it
+          required: true
+        - label: I tried it in Spotifast
+          required: true

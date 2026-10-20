@@ -1,0 +1,31 @@
+name: Report a theme
+description: Let us know if a theme has a rude name, copies someone else's, or is spam.
+title: "Report: "
+labels: ["theme-report"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping keep the gallery nice. The easiest way to get here is the "Let us know"
+        link at the bottom of a theme's page, which fills in the theme for you.
+
+  - type: input
+    id: slug
+    attributes:
+      label: Theme
+      description: The end of the theme's web address, like midnight-vinyl.
+      placeholder: midnight-vinyl
+    validations:
+      required: true
+
+  - type: dropdown
+    id: reason
+    attributes:
+      label: What's wrong
+      options:
+        - Rude or offensive name
+        - Copied from someone else
+        - Spam
+        - Something else
+    validations:
+      required: true

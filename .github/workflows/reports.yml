@@ -1,0 +1,58 @@
+name: reports
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: reports
+  cancel-in-progress: false
+
+jobs:
+  reports:
+    # New reports, or the repo owner commenting /remove on one. The script checks both again.
+    if: >-
+      contains(github.event.issue.labels.*.name, 'theme-report') &&
+      github.event.issue.state == 'open' &&
+      (
+        github.event_name == 'issues' ||
+        (
+          github.event.issue.pull_request == null &&
+          github.event.comment.user.login == github.repository_owner &&
+          github.event.comment.author_association == 'OWNER'
+        )
+      )
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: master
+          persist-credentials: false
+
+      - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 22.22.0
+
+      - name: Install pnpm
+        run: npm install --global pnpm@10.28.0
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - id: app
+        uses: actions/create-github-app-token@bcd2ba49218906704ab6c1aa796996da409d3eb1 # v3.2.0
+        with:
+          app-id: ${{ secrets.BOT_APP_ID }}
+          private-key: ${{ secrets.BOT_PRIVATE_KEY }}
+
+      - name: Count reports, or handle /remove
+        run: pnpm exec tsx scripts/reports.ts
+        env:
+          GH_TOKEN: ${{ steps.app.outputs.token }}
+          BOT_LOGIN: ${{ steps.app.outputs.app-slug }}[bot]

@@ -10,6 +10,7 @@ import {
   META_MAX_BYTES,
   THEME_MAX_BYTES,
   metaSchema,
+  removedSchema,
   slugify,
   themeSchema,
   type Meta,
@@ -38,6 +39,8 @@ interface LoadedTheme {
 export interface ValidateOptions {
   // Palettes a new theme must not copy, besides the ones already in the folder.
   reference?: { name: string; palette: Palette }[];
+  // A theme being submitted right now: always treated as the newest one.
+  candidate?: string;
 }
 
 export function validateThemes(themesDir: string, options: ValidateOptions = {}): ThemeReport[] {
@@ -45,7 +48,7 @@ export function validateThemes(themesDir: string, options: ValidateOptions = {})
   const loaded = slugs.map((slug) => loadTheme(themesDir, slug));
 
   checkUniqueNames(loaded);
-  checkNearDuplicates(loaded, options.reference ?? []);
+  checkNearDuplicates(loaded, options.reference ?? [], options.candidate);
 
   return loaded.map(({ slug, errors }) => ({ slug, errors }));
 }
@@ -174,10 +177,19 @@ function checkUniqueNames(themes: LoadedTheme[]) {
 }
 
 // The newer of two near-identical themes gets the error; the older one keeps its spot.
-function checkNearDuplicates(themes: LoadedTheme[], reference: { name: string; palette: Palette }[]) {
+function checkNearDuplicates(
+  themes: LoadedTheme[],
+  reference: { name: string; palette: Palette }[],
+  candidate?: string,
+) {
   const ordered = themes
     .filter((t) => t.palette && t.meta)
-    .sort((a, b) => a.meta!.added.localeCompare(b.meta!.added) || a.slug.localeCompare(b.slug));
+    .sort(
+      (a, b) =>
+        Number(a.slug === candidate) - Number(b.slug === candidate) ||
+        a.meta!.added.localeCompare(b.meta!.added) ||
+        a.slug.localeCompare(b.slug),
+    );
 
   ordered.forEach((theme, i) => {
     const ref = reference.find((r) => isNearDuplicate(theme.palette!, r.palette));
@@ -208,5 +220,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   // (they aren't in the crmne/spotifast repo; take them from a fresh install's themes folder).
   const reports = validateThemes(themesDir);
   console.log(formatReport(reports));
+  const removedPath = join(themesDir, "..", "removed.json");
+  const removed = removedSchema.safeParse(JSON.parse(readFileSync(removedPath, "utf8")));
+  if (!removed.success) {
+    console.log(`removed.json is broken: ${removed.error.issues.map((i) => i.message).join("; ")}`);
+    process.exit(1);
+  }
   process.exit(reports.some((r) => r.errors.length) ? 1 : 0);
 }
